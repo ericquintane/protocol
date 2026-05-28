@@ -16,8 +16,8 @@ const __dirname = dirname(__filename);
 const root = join(__dirname, "..");
 
 const JOURNAL_IDS = {
-  "social-networks": "S138689930", // OpenAlex source id for Social Networks (Elsevier)
-  "network-science": "S33112374" // OpenAlex source id for Network Science (Cambridge)
+  "social-networks": "S26186134", // OpenAlex source id for Social Networks (Elsevier)
+  "network-science": "S2530642067" // OpenAlex source id for Network Science (Cambridge)
 };
 
 const args = Object.fromEntries(

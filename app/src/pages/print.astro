@@ -1,0 +1,239 @@
+---
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NetP — Print preview</title>
+    <style>
+      :root {
+        --fg: #111;
+        --muted: #555;
+        --border: #ccc;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        color: var(--fg);
+        line-height: 1.45;
+        background: #fafafa;
+      }
+      .page {
+        max-width: 7.5in;
+        margin: 1in auto;
+        padding: 1in;
+        background: white;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.06);
+      }
+      .toolbar {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        display: flex;
+        gap: 0.5rem;
+        background: white;
+        padding: 0.5rem;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      }
+      .toolbar button {
+        font-family: -apple-system, system-ui, sans-serif;
+        font-size: 0.9rem;
+        padding: 0.35rem 0.75rem;
+        background: #1f5b88;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      .toolbar button.secondary {
+        background: white;
+        color: var(--fg);
+        border: 1px solid var(--border);
+      }
+      h1 { font-size: 1.6rem; margin: 0 0 0.5rem; }
+      h2 { font-size: 1.15rem; margin: 1.5rem 0 0.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.2rem; }
+      h3 { font-size: 1rem; margin: 1rem 0 0.4rem; font-style: italic; font-weight: normal; }
+      table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin-bottom: 0.75rem; }
+      th, td { border: 1px solid var(--border); padding: 0.35rem 0.55rem; text-align: left; vertical-align: top; }
+      th { background: #f4f1ea; font-weight: 600; width: 30%; }
+      .placeholder {
+        color: var(--muted);
+        font-style: italic;
+        padding: 2rem 0;
+        text-align: center;
+      }
+      footer {
+        margin-top: 2rem;
+        font-size: 0.8rem;
+        color: var(--muted);
+        border-top: 1px solid var(--border);
+        padding-top: 0.5rem;
+      }
+
+      @media print {
+        body { background: white; }
+        .toolbar { display: none; }
+        .page { box-shadow: none; margin: 0; padding: 0.4in 0.5in; max-width: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toolbar">
+      <button type="button" onclick="window.print()">Print / save as PDF</button>
+      <button type="button" class="secondary" onclick="window.close()">Close</button>
+    </div>
+    <div class="page" id="output">
+      <p class="placeholder">Loading filled protocol…</p>
+    </div>
+
+    <script type="module">
+      const SS_KEY = "netp:print-preview";
+
+      function el(html) {
+        const tpl = document.createElement("template");
+        tpl.innerHTML = html.trim();
+        return tpl.content.firstElementChild;
+      }
+
+      function escape(value) {
+        if (value == null) return "";
+        if (typeof value === "boolean") return value ? "yes" : "no";
+        if (Array.isArray(value)) return value.join(", ");
+        if (typeof value === "object") return JSON.stringify(value);
+        return String(value);
+      }
+
+      function row(label, value) {
+        if (value == null || value === "") return null;
+        if (Array.isArray(value) && value.length === 0) return null;
+        return `<tr><th>${escape(label)}</th><td>${escape(value)}</td></tr>`;
+      }
+
+      function tableHtml(rows) {
+        const f = rows.filter(Boolean);
+        if (f.length === 0) return '<p class="placeholder" style="padding: 0.5rem 0;">(no information recorded)</p>';
+        return `<table>${f.join("")}</table>`;
+      }
+
+      function renderProtocol(p) {
+        const out = [];
+        const title = p.overview?.description ?? "Network description (NetP)";
+        out.push(`<h1>Network Protocol — ${escape(title)}</h1>`);
+        if (p.dataset_doi) out.push(`<p><strong>Dataset DOI:</strong> ${escape(p.dataset_doi)}</p>`);
+        if (p.schema_version) out.push(`<p style="color: var(--muted); font-size: 0.85rem;">Filled against NetP schema v${escape(p.schema_version)}.</p>`);
+
+        const overview = p.overview ?? {};
+        const dataType = overview.data_type ?? {};
+        const dates = overview.dates ?? {};
+        const geo = overview.geographic_location ?? {};
+        out.push("<h2>Overview</h2>");
+        out.push(tableHtml([
+          row("Description", overview.description),
+          row("Temporal", dataType.temporal),
+          row("Variability", dataType.variability),
+          row("Mode", overview.mode),
+          row("Number of waves", overview.number_of_waves),
+          row("Number of relationships", overview.number_of_relationships),
+          row("Initial date", dates.initial_date),
+          row("Final date", dates.final_date),
+          row("Wave dates", dates.wave_dates),
+          row("Country", geo.country),
+          row("Region", geo.region),
+          row("City", geo.city),
+          row("Associated publication", overview.associated_publication)
+        ]));
+
+        const dc = p.data_collection ?? {};
+        out.push("<h2>Data collection</h2>");
+        out.push(tableHtml([
+          row("Source of data", dc.source_of_data),
+          row("Details", dc.details),
+          row("Method", dc.method)
+        ]));
+
+        out.push("<h2>Nodes</h2>");
+        (p.nodes ?? []).forEach((n, i) => {
+          if ((p.nodes ?? []).length > 1) out.push(`<h3>Mode ${i + 1}</h3>`);
+          out.push(tableHtml([
+            row("General typology", n.general_typology),
+            row("Detailed typology", n.detailed_typology),
+            row("Network boundary", n.network_boundary),
+            row("Node exclusion", n.node_exclusion),
+            row("Node transformation", n.node_transformation)
+          ]));
+        });
+
+        out.push("<h2>Ties</h2>");
+        (p.ties ?? []).forEach((t) => {
+          const label = t.label ?? "(unnamed)";
+          const generalDetailed = [t.general_typology, t.detailed_typology].filter(Boolean).join(" / ");
+          out.push(`<h3>Relationship: ${escape(label)} (${escape(generalDetailed)})</h3>`);
+          const weight = t.weight ?? {};
+          out.push(tableHtml([
+            row("Direction", t.direction),
+            row("Self-links allowed", t.self_links),
+            row("Weighted", weight.has_weight),
+            row("Weight represents", weight.represents),
+            row("Weight range", weight.range),
+            row("Weight unit", weight.unit),
+            row("Transformation", t.transformation),
+            row("Maximum outdegree", t.maximum_outdegree),
+            row("Name generator", t.name_generator),
+            row("Type of name generator", t.type_of_name_generator),
+            row("Name interpreter", t.name_interpreter)
+          ]));
+        });
+
+        out.push("<h2>Statistics</h2>");
+        (p.statistics ?? []).forEach((s) => {
+          out.push(`<h3>${escape(s.relationship ?? "(unnamed)")}, wave ${escape(s.wave ?? 1)}</h3>`);
+          out.push(tableHtml([
+            row("Wave date", s.wave_date),
+            row("Network size", s.network_size),
+            row("Response rate", s.response_rate),
+            row("Number of ties", s.number_of_ties),
+            row("Density", s.density),
+            row("Average path length", s.average_path_length),
+            row("Average degree", s.average_degree),
+            row("Number of isolates", s.number_of_isolates),
+            row("Clustering coefficient", s.clustering_coefficient),
+            row("Degree centralization", s.degree_centralization),
+            row("Reciprocity", s.reciprocity),
+            row("Indegree centralization", s.indegree_centralization),
+            row("Outdegree centralization", s.outdegree_centralization),
+            row("Number of new ties", s.number_of_new_ties),
+            row("Number of lost ties", s.number_of_lost_ties)
+          ]));
+        });
+
+        if (p.additional_information && p.additional_information.trim()) {
+          out.push("<h2>Additional information</h2>");
+          out.push(`<p>${escape(p.additional_information.trim()).replace(/\n/g, "<br>")}</p>`);
+        }
+
+        out.push("<footer>Generated with the NetP web app (https://ericquintane.github.io/protocol/).</footer>");
+
+        return out.join("");
+      }
+
+      try {
+        const raw = sessionStorage.getItem(SS_KEY);
+        if (!raw) {
+          document.getElementById("output").innerHTML =
+            '<p class="placeholder">No protocol data found. Open this page from the "Open print view" button on the Fill page.</p>';
+        } else {
+          const data = JSON.parse(raw);
+          document.getElementById("output").innerHTML = renderProtocol(data);
+        }
+      } catch (err) {
+        document.getElementById("output").innerHTML =
+          `<p class="placeholder">Could not render the protocol: ${err.message}</p>`;
+      }
+    </script>
+  </body>
+</html>
