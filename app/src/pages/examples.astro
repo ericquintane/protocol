@@ -1,0 +1,53 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+const examples = [
+  {
+    slug: "padgett-marriage",
+    title: "Padgett (univariate, marriage only)",
+    description:
+      "Marriage relationships among Renaissance Florentine families, c.1430. Cross-sectional, one-mode, undirected. Source: Padgett & Ansell (1993), subsample from Breiger & Pattison (1986)."
+  },
+  {
+    slug: "padgett-multivariate",
+    title: "Padgett (multivariate: marriage + economic)",
+    description:
+      "Same elite Florentine families with two relationships: marriage and aggregated economic exchanges. Cross-sectional, one-mode, undirected, multivariate."
+  },
+  {
+    slug: "brennecke",
+    title: "Brennecke (2020, AMJ)",
+    description:
+      "Seeking problem-solving assistance and difficult relationships in an aerospace engineering department. Cross-sectional, one-mode, directed, multivariate (171 employees)."
+  },
+  {
+    slug: "troester",
+    title: "Tröster et al. (2019, AMJ)",
+    description:
+      "Longitudinal advice and friendship ties across eight Dutch healthcare organizations over three waves approximately four months apart."
+  }
+];
+---
+
+<Layout title="Examples — NetP">
+  <h1>Worked examples</h1>
+  <p>
+    Filled protocols for several published datasets. View the raw JSON, or open one in the
+    form to inspect, edit, and re-download.
+  </p>
+
+  <ul style="list-style: none; padding: 0;">
+    {examples.map((ex) => (
+      <li style="border: 1px solid var(--color-border); border-radius: 4px; padding: 1rem 1.25rem; margin-bottom: 1rem; background: white;">
+        <h3 style="margin: 0 0 0.25rem;">{ex.title}</h3>
+        <p style="color: var(--color-muted); margin: 0 0 0.75rem;">{ex.description}</p>
+        <div style="display: flex; gap: 0.75rem;">
+          <a class="button" href={`${base}/examples/${ex.slug}.json`}>View JSON</a>
+          <a class="button secondary" href={`${base}/fill?load=${ex.slug}`}>Open in form</a>
+        </div>
+      </li>
+    ))}
+  </ul>
+</Layout>

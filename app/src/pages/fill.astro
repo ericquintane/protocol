@@ -1,0 +1,14 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ProtocolForm from "../components/ProtocolForm";
+---
+
+<Layout title="Fill the protocol — NetP">
+  <h1>Fill the protocol</h1>
+  <p>
+    Fill in the fields below. Your draft is saved automatically in your browser; nothing is
+    sent anywhere. When you are done, download the filled protocol as JSON.
+  </p>
+
+  <ProtocolForm client:only="react" />
+</Layout>

@@ -1,0 +1,62 @@
+---
+import Layout from "../layouts/Layout.astro";
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+---
+
+<Layout title="NetP — Network Protocol">
+  <h1>NetP — Network Protocol</h1>
+  <p style="font-size: 1.05rem; color: var(--color-muted);">
+    A standard protocol for describing social network datasets.
+  </p>
+
+  <div class="note">
+    <strong>Pre-release.</strong> Target submission of the companion paper to <em>Network Science</em>:
+    August–September 2026.
+  </div>
+
+  <h2>What this is</h2>
+  <p>
+    The Network Protocol (NetP) is a structured template for describing the social network
+    datasets used in empirical articles. Filled along with a publication, it provides a
+    complete description of the network, the data collection process, the nodes, the ties,
+    and the basic network statistics — at a glance. The goal is to make network research
+    more transparent, more replicable, and more comparable across studies.
+  </p>
+
+  <h2>How it works</h2>
+  <ol>
+    <li>
+      <a href={base + "/fill"}>Fill the protocol</a> using the structured form on this site.
+      The form is driven by a JSON Schema (the single source of truth for the protocol),
+      validates your input as you go, and saves your draft locally.
+    </li>
+    <li>
+      Download the filled protocol as JSON. (Markdown and PDF export coming soon.)
+    </li>
+    <li>
+      Include the filled protocol as an appendix to your article, or deposit it alongside
+      your dataset in a public repository.
+    </li>
+  </ol>
+
+  <h2>What the protocol covers</h2>
+  <ol>
+    <li><strong>Overview</strong> — data type, mode, number of waves and relationships, dates, geographic location, associated publication.</li>
+    <li><strong>Data collection</strong> — source of the data, details about the source, collection method.</li>
+    <li><strong>Nodes</strong> — typology, boundary, exclusions, transformations (per mode).</li>
+    <li><strong>Ties</strong> — typology, direction, weights, transformations, name generators (per relationship).</li>
+    <li><strong>Statistics</strong> — size, density, average degree, clustering, centralization, reciprocity, longitudinal change (per relationship × wave).</li>
+  </ol>
+
+  <h2>Worked examples</h2>
+  <p>
+    Browse <a href={base + "/examples"}>filled protocols</a> for several published datasets,
+    or open one directly in the form.
+  </p>
+
+  <h2>Roadmap</h2>
+  <ul>
+    <li>v1 (paper-time, mid-2026): form + JSON/MD/PDF download + in-browser network statistics from uploaded edgelist.</li>
+    <li>v2 (post-paper): a backend repository that accepts submitted protocols and exposes search and comparison across datasets — so researchers can ask <em>what is a normal density / centralization / reciprocity for a network of this kind?</em></li>
+  </ul>
+</Layout>
