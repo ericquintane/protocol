@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0.0",
+  "overview": {
+    "description": "Declared two-mode but only one node set provided.",
+    "data_type": { "temporal": "cross-sectional", "variability": "univariate" },
+    "mode": "two-mode",
+    "dates": { "initial_date": "2024", "final_date": "2024" },
+    "geographic_location": { "country": "France" }
+  },
+  "data_collection": { "source_of_data": "archival", "details": "Affiliation records." },
+  "nodes": [
+    { "general_typology": "individuals", "detailed_typology": "scientists", "network_boundary": "PIs at a national lab." }
+  ],
+  "ties": [
+    { "label": "affiliation", "general_typology": "similarities", "detailed_typology": "co-membership", "direction": "undirected", "self_links": false, "weight": { "has_weight": false } }
+  ],
+  "statistics": [
+    { "relationship": "affiliation", "wave": 1, "network_size": [40, 20], "number_of_ties": 100, "density": 0.125, "average_degree": [2.5, 5.0] }
+  ]
+}

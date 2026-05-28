@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0.0",
+  "overview": {
+    "description": "Density of 1.5 should be rejected (out of [0,1] range).",
+    "data_type": { "temporal": "cross-sectional", "variability": "univariate" },
+    "mode": "one-mode",
+    "dates": { "initial_date": "2024", "final_date": "2024" },
+    "geographic_location": { "country": "Spain" }
+  },
+  "data_collection": { "source_of_data": "observation", "details": "Field observations." },
+  "nodes": [{ "general_typology": "animals", "detailed_typology": "macaques", "network_boundary": "Members of troop X." }],
+  "ties": [
+    { "label": "grooming", "general_typology": "interactions", "detailed_typology": "grooming", "direction": "undirected", "self_links": false, "weight": { "has_weight": false } }
+  ],
+  "statistics": [
+    { "relationship": "grooming", "wave": 1, "network_size": [30], "number_of_ties": 200, "density": 1.5, "average_degree": [13.3] }
+  ]
+}

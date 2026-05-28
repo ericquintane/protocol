@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0.0",
+  "overview": {
+    "description": "Longitudinal advice and friendship ties among employees within eight healthcare organizations in the Netherlands.",
+    "data_type": { "temporal": "longitudinal", "variability": "multivariate" },
+    "mode": "one-mode",
+    "number_of_waves": 3,
+    "number_of_relationships": 2,
+    "dates": {
+      "initial_date": "unknown",
+      "final_date": "unknown",
+      "wave_dates": ["unknown", "unknown", "unknown"]
+    },
+    "geographic_location": { "country": "Netherlands" },
+    "associated_publication": "https://doi.org/10.5465/amj.2016.0914"
+  },
+  "data_collection": {
+    "source_of_data": "survey",
+    "details": "Eight Dutch healthcare organizations: one veterinary practice, one physiotherapy practice, one acupuncture practice, two pharmacies, and three dental practices. All but the pharmacies were group practices, in which professionals share facilities and assistants but treat their own stock of patients. Sample was 78% women; average age 37.3 (SD 10.9); average tenure 5.4 years (SD 5.7); average hours/week 26.8 (SD 10.19).",
+    "method": "Questionnaire"
+  },
+  "nodes": [
+    {
+      "general_typology": "individuals",
+      "detailed_typology": "employees",
+      "network_boundary": "Belonging to each of the eight organizations.",
+      "node_transformation": "Structural zeros were used in the first wave for individuals who appeared in the second wave but not the first."
+    }
+  ],
+  "ties": [
+    {
+      "label": "advice",
+      "general_typology": "interactions",
+      "detailed_typology": "advice",
+      "direction": "directed",
+      "self_links": false,
+      "weight": { "has_weight": false },
+      "transformation": "Missing network data were imputed with the standard Siena procedure (carry forward last value if available, otherwise zero). Imputation was applied to outgoing ties only. Structural zeros were added for ties between individuals in different organizations.",
+      "name_generator": "Do you usually go to this person for help or advice on work-related matters?",
+      "type_of_name_generator": "roster"
+    },
+    {
+      "label": "friendship",
+      "general_typology": "social relations",
+      "detailed_typology": "friendship (affective)",
+      "direction": "directed",
+      "self_links": false,
+      "weight": { "has_weight": false },
+      "transformation": "Missing network data were imputed with the standard Siena procedure (carry forward last value if available, otherwise zero). Imputation was applied to outgoing ties only. Structural zeros were added for ties between individuals in different organizations.",
+      "name_generator": "People with whom you like to spend your free time; people you have been with most often for informal social activities, such as visiting each other's homes or attending concerts or other public performances.",
+      "type_of_name_generator": "roster"
+    }
+  ],
+  "statistics": [
+    { "relationship": "advice", "wave": 1, "network_size": [118], "response_rate": 0.91, "number_of_ties": 518, "density": 0.0375, "average_degree": [4.39] },
+    { "relationship": "advice", "wave": 2, "network_size": [114], "response_rate": 0.90, "number_of_ties": 560, "density": 0.0435, "average_degree": [4.91], "number_of_new_ties": 215, "number_of_lost_ties": 173 },
+    { "relationship": "advice", "wave": 3, "network_size": [109], "response_rate": 0.89, "number_of_ties": 609, "density": 0.0517, "average_degree": [5.59], "number_of_new_ties": 180, "number_of_lost_ties": 131 },
+    { "relationship": "friendship", "wave": 1, "network_size": [118], "response_rate": 0.91, "number_of_ties": 757, "density": 0.0549, "average_degree": [6.42] },
+    { "relationship": "friendship", "wave": 2, "network_size": [114], "response_rate": 0.90, "number_of_ties": 839, "density": 0.0651, "average_degree": [7.36], "number_of_new_ties": 231, "number_of_lost_ties": 149 },
+    { "relationship": "friendship", "wave": 3, "network_size": [109], "response_rate": 0.89, "number_of_ties": 862, "density": 0.0732, "average_degree": [7.91], "number_of_new_ties": 168, "number_of_lost_ties": 145 }
+  ],
+  "additional_information": "Waves are approximately 4 months apart; specific dates are not reported in the original article. Region and city are not reported. Densities and average degrees not filled in the original Excel were computed here from the reported network size and tie counts (directed). The original filled protocol classified 'friendship' under 'Affective' at the top level; here we follow Borgatti et al. (2009) and encode it as 'social relations / friendship (affective)'."
+}

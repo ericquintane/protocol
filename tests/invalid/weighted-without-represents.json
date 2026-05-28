@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0.0",
+  "overview": {
+    "description": "Weight has_weight=true but missing required 'represents' and 'range' fields.",
+    "data_type": { "temporal": "cross-sectional", "variability": "univariate" },
+    "mode": "one-mode",
+    "dates": { "initial_date": "2024", "final_date": "2024" },
+    "geographic_location": { "country": "Brazil" }
+  },
+  "data_collection": { "source_of_data": "digital trace", "details": "Email logs." },
+  "nodes": [{ "general_typology": "individuals", "detailed_typology": "employees", "network_boundary": "Active employees." }],
+  "ties": [
+    { "label": "email", "general_typology": "interactions", "detailed_typology": "email", "direction": "directed", "self_links": false, "weight": { "has_weight": true } }
+  ],
+  "statistics": [
+    { "relationship": "email", "wave": 1, "network_size": [200], "number_of_ties": 4000, "density": 0.1, "average_degree": [20] }
+  ]
+}

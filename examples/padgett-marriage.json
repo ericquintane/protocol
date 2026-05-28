@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.0.0",
+  "overview": {
+    "description": "Marriage relationships among Renaissance Florentine families locked in a struggle for political control of the city of Florence in around 1430.",
+    "data_type": {
+      "temporal": "cross-sectional",
+      "variability": "univariate"
+    },
+    "mode": "one-mode",
+    "dates": {
+      "initial_date": "1394",
+      "final_date": "1434"
+    },
+    "geographic_location": {
+      "country": "Italy",
+      "region": "Tuscany",
+      "city": "Florence"
+    },
+    "associated_publication": "https://doi.org/10.1086/230190"
+  },
+  "data_collection": {
+    "source_of_data": "archival",
+    "details": "The networks constituted the Medicean political party used by Cosimo in 1434 to take over the budding Florentine Renaissance State. Built from the work of historians of Florence; especially Dale Kent's book 'The Rise of the Medici' (1978)."
+  },
+  "nodes": [
+    {
+      "general_typology": "groups of people",
+      "detailed_typology": "clans/families",
+      "network_boundary": "Florentine families in the political elite were included if (a) they had two or more members who spoke in the Consulte e Practiche three or more times between January 1429 and December 1434, (b) they had three or more members who qualified in 1433 for scrutiny or election to the leading public offices in Florence, or (c) they were a magnate clan.",
+      "node_exclusion": "Families with less than one marriage or economic relation; families without active participation in factions and away from political neutrals (see Padgett & Ansell, p. 1268).",
+      "node_transformation": "Data from people with a common last name was aggregated into a single clan/family node."
+    }
+  ],
+  "ties": [
+    {
+      "label": "marriage",
+      "general_typology": "social relations",
+      "detailed_typology": "marriage (kinship)",
+      "direction": "undirected",
+      "self_links": false,
+      "weight": {
+        "has_weight": false
+      }
+    }
+  ],
+  "statistics": [
+    {
+      "relationship": "marriage",
+      "wave": 1,
+      "network_size": [16],
+      "number_of_ties": 20,
+      "density": 0.167,
+      "average_path_length": 2.486,
+      "average_degree": [2.5],
+      "number_of_isolates": 1,
+      "clustering_coefficient": 0.218,
+      "degree_centralization": 0.267
+    }
+  ],
+  "additional_information": "Data corresponds to the subsample of 16 families available in UCINET, drawn from Padgett & Ansell's (1993) original 92-family dataset. The 16 families were selected by Breiger & Pattison (1986) as representative of those who clearly supported or opposed the Medicis. UCINET's data also includes economic relationships, which are omitted in this filled protocol. Note: the number of ties reported here is 20 undirected edges (the original docx draft reported 40, which corresponds to the directed arc count under a symmetric reading)."
+}

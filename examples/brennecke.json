@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0.0",
+  "overview": {
+    "description": "Seeking problem-solving assistance and difficult relationships in an engineering department of a large manufacturing firm in the aerospace industry.",
+    "data_type": { "temporal": "cross-sectional", "variability": "multivariate" },
+    "mode": "one-mode",
+    "number_of_relationships": 2,
+    "dates": { "initial_date": "unknown", "final_date": "unknown" },
+    "geographic_location": { "country": "unknown" },
+    "associated_publication": "https://doi.org/10.5465/amj.2017.0399"
+  },
+  "data_collection": {
+    "source_of_data": "survey",
+    "details": "The firm delivers specialised designs and produces complex, technical components as part of an international supply chain. Its engineering department comprises 11 cross-functional units, each with its own formal leader, plus a general leadership unit; the engineers engage in a variety of complex tasks in design engineering and analysis.",
+    "method": "Online survey"
+  },
+  "nodes": [
+    {
+      "general_typology": "individuals",
+      "detailed_typology": "employees",
+      "network_boundary": "Belonging to the engineering department.",
+      "node_exclusion": "Non-respondents were not included in the network (all of them were of low hierarchical rank)."
+    }
+  ],
+  "ties": [
+    {
+      "label": "problem_solving",
+      "general_typology": "interactions",
+      "detailed_typology": "seeking problem-solving assistance",
+      "direction": "directed",
+      "self_links": false,
+      "weight": { "has_weight": false },
+      "transformation": "Ties to non-respondents were excluded.",
+      "name_generator": "When you need to engage in creative problem-solving regarding your job, who are the people you go to, to help you think outside of the box and consider different aspects of the problem innovatively?",
+      "type_of_name_generator": "roster"
+    },
+    {
+      "label": "difficult",
+      "general_typology": "social relations",
+      "detailed_typology": "difficult relationships (affective)",
+      "direction": "directed",
+      "self_links": false,
+      "weight": { "has_weight": false },
+      "transformation": "Ties to non-respondents were excluded.",
+      "name_generator": "Who do you find difficult to work with?",
+      "type_of_name_generator": "roster"
+    }
+  ],
+  "statistics": [
+    {
+      "relationship": "problem_solving",
+      "wave": 1,
+      "network_size": [171],
+      "response_rate": 0.72,
+      "number_of_ties": 1663,
+      "density": 0.057,
+      "average_degree": [9.725],
+      "reciprocity": 0.275
+    },
+    {
+      "relationship": "difficult",
+      "wave": 1,
+      "network_size": [171],
+      "response_rate": 0.72,
+      "number_of_ties": 413,
+      "density": 0.014,
+      "average_degree": [2.415],
+      "reciprocity": 0.102
+    }
+  ],
+  "additional_information": "The data setting was chosen as an exemplar of a highly knowledge-intensive workplace: aerospace manufacturers construct complex, heterogeneous systems and rely on continuous innovation. The original filled protocol (Brennecke 2020, AMJ) classified 'difficult relationships' under 'Affective' at the top level; here we follow Borgatti et al. (2009) and encode it as 'social relations / difficult relationships (affective)'. Country, region, city, and data-collection dates are not reported in the article and are recorded as 'unknown'."
+}

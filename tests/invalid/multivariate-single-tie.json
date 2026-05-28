@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0.0",
+  "overview": {
+    "description": "Declared multivariate but only contains one tie definition.",
+    "data_type": { "temporal": "cross-sectional", "variability": "multivariate" },
+    "mode": "one-mode",
+    "number_of_relationships": 2,
+    "dates": { "initial_date": "2024", "final_date": "2024" },
+    "geographic_location": { "country": "Germany" }
+  },
+  "data_collection": { "source_of_data": "survey", "details": "Sample." },
+  "nodes": [{ "general_typology": "individuals", "detailed_typology": "employees", "network_boundary": "Employees of the company." }],
+  "ties": [
+    { "label": "advice", "general_typology": "social relations", "detailed_typology": "advice", "direction": "directed", "self_links": false, "weight": { "has_weight": false } }
+  ],
+  "statistics": [
+    { "relationship": "advice", "wave": 1, "network_size": [50], "number_of_ties": 120, "density": 0.05, "average_degree": [2.4] }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0.0",
+  "overview": {
+    "description": "A longitudinal advice network missing the required number_of_waves field.",
+    "data_type": { "temporal": "longitudinal", "variability": "univariate" },
+    "mode": "one-mode",
+    "dates": { "initial_date": "2020", "final_date": "2021" },
+    "geographic_location": { "country": "Italy" }
+  },
+  "data_collection": { "source_of_data": "survey", "details": "Annual panel." },
+  "nodes": [{ "general_typology": "individuals", "detailed_typology": "students", "network_boundary": "Enrolled MBA students." }],
+  "ties": [{ "label": "advice", "general_typology": "social relations", "detailed_typology": "advice", "direction": "directed", "self_links": false, "weight": { "has_weight": false } }],
+  "statistics": [
+    { "relationship": "advice", "wave": 1, "network_size": [80], "number_of_ties": 200, "density": 0.03, "average_degree": [2.5] },
+    { "relationship": "advice", "wave": 2, "network_size": [80], "number_of_ties": 220, "density": 0.035, "average_degree": [2.75] }
+  ]
+}

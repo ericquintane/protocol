@@ -1,0 +1,464 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://netprotocol.org/schema/v1/protocol.schema.json",
+  "title": "Network Protocol (NetP) v1",
+  "description": "Standard protocol for describing social network datasets. A filled instance of this schema serves as a complete description of an empirical network suitable for inclusion in an academic article or a public repository.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["overview", "data_collection", "nodes", "ties", "statistics"],
+  "properties": {
+    "schema_version": {
+      "description": "Version of the NetP schema used to validate this instance.",
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "dataset_doi": {
+      "description": "Unique identifier for the dataset (e.g. a DOI). Optional; may be assigned upon registration in a repository.",
+      "type": "string"
+    },
+    "overview": { "$ref": "#/$defs/overview" },
+    "data_collection": { "$ref": "#/$defs/data_collection" },
+    "nodes": {
+      "description": "One entry for one-mode networks; two entries for two-mode networks (one per mode).",
+      "type": "array",
+      "items": { "$ref": "#/$defs/node_set" },
+      "minItems": 1,
+      "maxItems": 2
+    },
+    "ties": {
+      "description": "One entry per relationship. Univariate networks have one; multivariate have as many as the network has distinct relationships.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/tie_set" },
+      "minItems": 1
+    },
+    "statistics": {
+      "description": "One entry per (relationship × wave) combination.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/tie_statistics" },
+      "minItems": 1
+    },
+    "additional_information": {
+      "description": "Free-text field for any information not captured by the structured fields above. Not intended for article-specific results or analysis details.",
+      "type": "string"
+    }
+  },
+
+  "allOf": [
+    {
+      "description": "Cross-mode consistency: if mode is two-mode, the nodes array must have two entries.",
+      "if": {
+        "type": "object",
+        "properties": {
+          "overview": {
+            "type": "object",
+            "properties": { "mode": { "const": "two-mode" } },
+            "required": ["mode"]
+          }
+        },
+        "required": ["overview"]
+      },
+      "then": {
+        "type": "object",
+        "properties": { "nodes": { "type": "array", "minItems": 2, "maxItems": 2 } }
+      },
+      "else": {
+        "type": "object",
+        "properties": { "nodes": { "type": "array", "minItems": 1, "maxItems": 1 } }
+      }
+    },
+    {
+      "description": "If multivariate, ties must have at least two entries.",
+      "if": {
+        "type": "object",
+        "properties": {
+          "overview": {
+            "type": "object",
+            "properties": {
+              "data_type": {
+                "type": "object",
+                "properties": { "variability": { "const": "multivariate" } },
+                "required": ["variability"]
+              }
+            },
+            "required": ["data_type"]
+          }
+        },
+        "required": ["overview"]
+      },
+      "then": {
+        "type": "object",
+        "properties": { "ties": { "type": "array", "minItems": 2 } }
+      },
+      "else": {
+        "type": "object",
+        "properties": { "ties": { "type": "array", "maxItems": 1 } }
+      }
+    }
+  ],
+
+  "$defs": {
+
+    "overview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description", "data_type", "mode", "dates", "geographic_location"],
+      "properties": {
+        "description": {
+          "description": "One-line, concise, specific description of the network. Should capture the kind of nodes, the kind of ties, the empirical context, and the time frame.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "data_type": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["temporal", "variability"],
+          "properties": {
+            "temporal": {
+              "description": "Cross-sectional networks describe a single time frame. Longitudinal networks describe multiple time frames among the same set of actors.",
+              "type": "string",
+              "enum": ["cross-sectional", "longitudinal"]
+            },
+            "variability": {
+              "description": "Univariate networks include only one type of relationship. Multivariate networks include multiple types of relationships between the same entities.",
+              "type": "string",
+              "enum": ["univariate", "multivariate"]
+            }
+          }
+        },
+        "mode": {
+          "description": "One-mode networks have ties between entities of a single type. Two-mode networks have ties between entities of two distinct types (e.g. people and events).",
+          "type": "string",
+          "enum": ["one-mode", "two-mode"]
+        },
+        "number_of_waves": {
+          "description": "Distinct instances when network data among the same set of actors was collected. Required for longitudinal data; omit for cross-sectional.",
+          "type": "integer",
+          "minimum": 2
+        },
+        "number_of_relationships": {
+          "description": "Number of distinct types of relationships represented in the data. Required for multivariate data; omit for univariate.",
+          "type": "integer",
+          "minimum": 2
+        },
+        "dates": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["initial_date", "final_date"],
+          "properties": {
+            "initial_date": {
+              "description": "Initial date of the data. Accepts YYYY, YYYY-MM, YYYY-MM-DD, or the literal string 'unknown' if not reported in the source.",
+              "type": "string",
+              "pattern": "^(unknown|\\d{4}(-\\d{2}(-\\d{2})?)?)$"
+            },
+            "final_date": {
+              "description": "Final date of the data. Accepts YYYY, YYYY-MM, YYYY-MM-DD, or the literal string 'unknown' if not reported in the source.",
+              "type": "string",
+              "pattern": "^(unknown|\\d{4}(-\\d{2}(-\\d{2})?)?)$"
+            },
+            "wave_dates": {
+              "description": "For longitudinal data: date of each wave. The number of entries should equal overview.number_of_waves.",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^(unknown|\\d{4}(-\\d{2}(-\\d{2})?)?)$"
+              }
+            }
+          }
+        },
+        "geographic_location": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "country": { "type": "string" },
+            "region": { "type": "string" },
+            "city": { "type": "string" }
+          },
+          "minProperties": 1
+        },
+        "associated_publication": {
+          "description": "DOI or URL of the primary publication associated with the data, if any.",
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "data_type": {
+                "type": "object",
+                "properties": { "temporal": { "const": "longitudinal" } },
+                "required": ["temporal"]
+              }
+            },
+            "required": ["data_type"]
+          },
+          "then": {
+            "type": "object",
+            "required": ["number_of_waves"],
+            "properties": {
+              "dates": {
+                "type": "object",
+                "required": ["wave_dates"]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "data_type": {
+                "type": "object",
+                "properties": { "variability": { "const": "multivariate" } },
+                "required": ["variability"]
+              }
+            },
+            "required": ["data_type"]
+          },
+          "then": {
+            "type": "object",
+            "required": ["number_of_relationships"]
+          }
+        }
+      ]
+    },
+
+    "data_collection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_of_data", "details"],
+      "properties": {
+        "source_of_data": {
+          "description": "Where the information comes from. Suggested values include 'archival', 'survey', 'observation', 'interview', 'database', 'digital trace', 'experimental'. Authors are encouraged to be as specific as possible.",
+          "type": "string",
+          "examples": ["archival", "survey", "observation", "interview", "database", "digital trace", "experimental"]
+        },
+        "details": {
+          "description": "Any information relevant about the source of the data: name of the survey or archive, the larger project the data belongs to, specifics about the sample or its context, etc.",
+          "type": "string"
+        },
+        "method": {
+          "description": "How the data was collected (for non-archival sources): e.g. online questionnaire, pen-and-paper questionnaire, phone interview, in-person interview, direct observation, automated logging.",
+          "type": "string"
+        }
+      }
+    },
+
+    "node_set": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["general_typology", "detailed_typology", "network_boundary"],
+      "properties": {
+        "general_typology": {
+          "description": "General category of nodes. Suggested values: 'individuals', 'groups of people', 'organizations', 'animals', 'objects', 'plants', 'places', 'words', 'concepts', 'events'. Authors may use their own category if needed.",
+          "type": "string",
+          "examples": ["individuals", "groups of people", "organizations", "animals", "objects", "plants", "places", "words", "concepts", "events"]
+        },
+        "detailed_typology": {
+          "description": "Specific category of nodes, e.g. 'students', 'cows', 'clans/families', 'airports', 'verbs'.",
+          "type": "string"
+        },
+        "network_boundary": {
+          "description": "Criteria used to delimit which nodes are included in the network.",
+          "type": "string"
+        },
+        "node_exclusion": {
+          "description": "Criteria used to exclude nodes that fell within the boundary (e.g. removing isolates, outliers, non-respondents).",
+          "type": "string"
+        },
+        "node_transformation": {
+          "description": "Manipulations performed on the nodes to obtain their final shape (e.g. aggregating multiple entities into a single node).",
+          "type": "string"
+        }
+      }
+    },
+
+    "tie_set": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "general_typology", "detailed_typology", "direction", "self_links", "weight"],
+      "properties": {
+        "label": {
+          "description": "Short identifier for the relationship, used to link this tie set to its statistics entries (e.g. 'marriage', 'advice', 'communication').",
+          "type": "string",
+          "pattern": "^[a-z0-9_-]+$",
+          "minLength": 1,
+          "maxLength": 50
+        },
+        "general_typology": {
+          "description": "Top-level category of the relationship, following Borgatti et al. (2009). Subcategories like 'kinship' or 'affective' belong in 'detailed_typology' rather than here — they sit under 'social relations'. Subcategories like 'membership' or 'attribute' sit under 'similarities'.",
+          "type": "string",
+          "enum": ["similarities", "social relations", "interactions", "flows"]
+        },
+        "detailed_typology": {
+          "description": "Specific category of the relationship, e.g. 'friendship', 'advice', 'marriage (kinship)', 'co-membership', 'email exchange'. When the original article uses a Borgatti subcategory label (e.g. 'affective', 'kinship', 'membership'), the convention is to record the specific relationship followed by the subcategory in parentheses.",
+          "type": "string"
+        },
+        "direction": {
+          "type": "string",
+          "enum": ["directed", "undirected"]
+        },
+        "self_links": {
+          "description": "Whether nodes can have ties to themselves.",
+          "type": "boolean"
+        },
+        "weight": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["has_weight"],
+          "properties": {
+            "has_weight": { "type": "boolean" },
+            "represents": {
+              "description": "If weighted: what the weight represents (e.g. frequency of communication, amount of trade).",
+              "type": "string"
+            },
+            "range": {
+              "description": "If weighted: range of values, e.g. '0-100' or '1-7'.",
+              "type": "string"
+            },
+            "unit": {
+              "description": "If weighted: unit of measurement, e.g. 'thousands of euros', 'messages per day'.",
+              "type": "string"
+            }
+          },
+          "if": {
+            "type": "object",
+            "properties": { "has_weight": { "const": true } },
+            "required": ["has_weight"]
+          },
+          "then": {
+            "type": "object",
+            "required": ["represents", "range"]
+          }
+        },
+        "transformation": {
+          "description": "Manipulations performed on the ties (e.g. dichotomization, symmetrization, aggregation across reports).",
+          "type": "string"
+        },
+        "maximum_outdegree": {
+          "description": "Limit placed during data collection on the number of outgoing ties per entity, if any. Provide either an integer or a brief description.",
+          "type": ["string", "integer"]
+        },
+        "name_generator": {
+          "description": "Exact phrase used to elicit a list of alters (for survey/interview data).",
+          "type": "string"
+        },
+        "type_of_name_generator": {
+          "description": "Whether participants were presented with a roster of names or asked to recall names freely (for survey/interview data).",
+          "type": "string",
+          "enum": ["roster", "free recall"]
+        },
+        "name_interpreter": {
+          "description": "Exact phrase used to obtain additional information about each tie (for survey/interview data).",
+          "type": "string"
+        }
+      }
+    },
+
+    "tie_statistics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relationship", "wave", "network_size", "number_of_ties", "density", "average_degree"],
+      "properties": {
+        "relationship": {
+          "description": "Label of the relationship this statistics entry describes. Must match the 'label' of an entry in the top-level 'ties' array.",
+          "type": "string",
+          "pattern": "^[a-z0-9_-]+$"
+        },
+        "wave": {
+          "description": "Wave index, starting at 1. Cross-sectional networks always use 1.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "wave_date": {
+          "description": "Date of this wave, if longitudinal. Accepts YYYY, YYYY-MM, or YYYY-MM-DD.",
+          "type": "string",
+          "pattern": "^(unknown|\\d{4}(-\\d{2}(-\\d{2})?)?)$"
+        },
+        "network_size": {
+          "description": "Number of nodes in the final network. One entry for one-mode networks; two entries (one per mode) for two-mode networks.",
+          "type": "array",
+          "items": { "type": "integer", "minimum": 0 },
+          "minItems": 1,
+          "maxItems": 2
+        },
+        "response_rate": {
+          "description": "Survey response rate. Expressed as a proportion in [0, 1].",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "number_of_ties": {
+          "description": "Total number of edges (undirected) or arcs (directed) in the final network.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "density": {
+          "description": "Number of ties divided by the number of potential ties.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "average_path_length": {
+          "description": "Mean geodesic distance between any two reachable nodes.",
+          "type": "number",
+          "minimum": 0
+        },
+        "average_degree": {
+          "description": "Number of ties divided by the number of nodes. One entry for one-mode networks; two entries (one per mode) for two-mode networks.",
+          "type": "array",
+          "items": { "type": "number", "minimum": 0 },
+          "minItems": 1,
+          "maxItems": 2
+        },
+        "number_of_isolates": {
+          "description": "Number of nodes with zero indegree and zero outdegree.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "clustering_coefficient": {
+          "description": "Average interconnectedness of each node's neighbors. See Watts (1999).",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "degree_centralization": {
+          "description": "Extent to which the degree distribution is skewed. Use for undirected networks.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "reciprocity": {
+          "description": "Proportion of arcs for which the reverse arc also exists. Use for directed networks.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "indegree_centralization": {
+          "description": "Indegree-based degree centralization. Use for directed networks.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "outdegree_centralization": {
+          "description": "Outdegree-based degree centralization. Use for directed networks.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "number_of_new_ties": {
+          "description": "Number of ties present at this wave but absent at the previous one. Use for longitudinal networks (wave > 1).",
+          "type": "integer",
+          "minimum": 0
+        },
+        "number_of_lost_ties": {
+          "description": "Number of ties present at the previous wave but absent at this one. Use for longitudinal networks (wave > 1).",
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}
